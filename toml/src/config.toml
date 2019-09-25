@@ -2,3 +2,11 @@
 [config]
 control_server_ipaddr = "0.0.0.0"
 control_server_port = 7077
+
+[[module]]
+filename = "filename_test1"
+execcmd = "execcmd_test1"
+
+[[module]]
+filename = "filename_test2"
+execcmd = "execcmd_test2"
