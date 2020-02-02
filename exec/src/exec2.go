@@ -29,7 +29,7 @@ func getStatusLsusb() map[string]string {
 	}
 	defer cmd.Process.Kill()
 	s := bufio.NewScanner(out)
-	nstr := "  \t\nSerial"
+	nstr := "  \t\n"
 	for s.Scan() {
 		s := s.Text()
 		if len(s) > 0 {
