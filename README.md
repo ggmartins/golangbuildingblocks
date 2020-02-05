@@ -10,4 +10,4 @@ Common reusable code gists/blocks using Golang
 - sync, multi-task / worker synchonization  
 - toml, configuration file reader examples
 - notifywebsocks, inotify + websockets 
-
+- pcap, minimal packet reader online/offline
