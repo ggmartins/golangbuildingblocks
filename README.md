@@ -11,3 +11,4 @@ Common reusable code gists/blocks using Golang
 - toml, configuration file reader examples
 - notifywebsocks, inotify + websockets 
 - pcap, minimal packet reader online/offline
+- reflect, object dump fieldName/Value
