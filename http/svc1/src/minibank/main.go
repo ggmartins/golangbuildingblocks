@@ -32,6 +32,14 @@ type Account struct {
 	Created_at time.Time `json:"created_at"`
 }
 
+type Transfer struct {
+	Id         int       `json:"id"`
+	IdSrc      int       `json:"account_origin_id"`
+	IdDst      int       `json:"account_destination_id"`
+	Amount     float64   `json:"amount"`
+	Created_at time.Time `json:"created_at"`
+}
+
 var db *sql.DB
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +47,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAccounts(w http.ResponseWriter, r *http.Request) {
-
 	accounts, err := db.Query("SELECT * FROM accounts")
 	if err != nil {
 		panic(err)
@@ -57,8 +64,8 @@ func GetAccounts(w http.ResponseWriter, r *http.Request) {
 			log.Println(err)
 		}
 	}
-
 }
+
 func GetAccountsIDBalance(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "GetAccountsIDBalance\n")
 }
@@ -66,7 +73,23 @@ func PostAccounts(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "PostAccounts\n")
 }
 func GetTransfers(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "GetTransfers\n")
+	accounts, err := db.Query("SELECT * FROM transfers")
+	if err != nil {
+		panic(err)
+	}
+	for accounts.Next() {
+		var row Transfer
+		if err := accounts.Scan(&row.Id, &row.IdSrc, &row.IdDst,
+			&row.Amount, &row.Created_at); err == nil {
+			jsonOut, err := json.Marshal(row)
+			if err != nil {
+				log.Printf("error: %s\n", err)
+			}
+			fmt.Fprintf(w, "%s\n", string(jsonOut))
+		} else {
+			log.Println(err)
+		}
+	}
 }
 func PostTransfers(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "PostTransfers\n")

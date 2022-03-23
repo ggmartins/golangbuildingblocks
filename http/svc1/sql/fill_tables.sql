@@ -12,3 +12,4 @@ INSERT INTO accounts (id, name, cpf, secret, balance, created_at) VALUES (1003, 
 INSERT INTO accounts (id, name, cpf, secret, balance, created_at) VALUES (1004, 'Jimmy Hendrix', '90450195074', '$2a$15$aHPMf0.R/AhT1KWaE9AVNO0OuEY6av/NLYFHiObWN3Fs5oRuQaeZC', '100.0', '2021-12-01 00:15:00-04');
 INSERT INTO accounts (id, name, cpf, secret, balance, created_at) VALUES (1005, 'Jimmy Page', '62230356089', '$2a$15$qlHpA/QvOLwcrJ1m0NA6eu8phqJ6zWinW1wArF9eph9K2uZMpsTVK', '666.666', '2022-01-02 14:30:00-04');
 INSERT INTO accounts (id, name, cpf, secret, balance, created_at) VALUES (1006, 'Angus Young', '73390504001', '$2a$15$tJHEa9RtE20dIVCzGod5seZ4wViJxzy49a4Ftepc.nPEx0A1FYoNO', '333.333', '2022-03-15 15:19:03-04');
+INSERT INTO transfers (id, account_origin_id, account_destination_id, amount,  created_at) VALUES (90000, 1003, 1001, '300.00', '2022-03-15 15:19:03-04');
