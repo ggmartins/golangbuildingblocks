@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -93,6 +94,84 @@ func GetTransfers(w http.ResponseWriter, r *http.Request) {
 }
 func PostTransfers(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "PostTransfers\n")
+	var t Transfer
+	err := json.NewDecoder(r.Body).Decode(&t)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	var IdSrc int
+	var BalanceSrc float64
+	err = db.QueryRow("SELECT id, balance from accounts where id = $1", t.IdSrc).Scan(&IdSrc, &BalanceSrc)
+	if err != nil {
+		//TODO: fix "http: superfluous response.WriteHeader call from main.PostTransfers"
+		//http.Error(w, err.Error(), http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Conta de origem não identificada (%q)"}`, err)
+		log.Printf(`{"result":"Negado","error":"Conta de origem não identificada (%q)"}`, err)
+		return
+	}
+
+	var IdDst int
+	var BalanceDst float64
+	err = db.QueryRow("SELECT id, balance from accounts where id = $1", t.IdDst).Scan(&IdDst, &BalanceDst)
+	if err != nil {
+		//TODO: fix "http: superfluous response.WriteHeader call from main.PostTransfers"
+		//http.Error(w, err.Error(), http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Conta de destino não identificada %q"}`, err)
+		log.Printf(`{"result":"Negado","error":"Conta de destino não identificada %q"}`, err)
+		return
+	}
+	log.Printf("*** IdSrc: %d\n", IdSrc)
+	log.Printf("*** IdDst: %d\n", IdDst)
+	log.Printf("*** Amount: %f\n", t.Amount)
+	log.Printf("*** BalanceSrc: %f\n", BalanceSrc)
+	log.Printf("*** BalanceDst: %f\n", BalanceDst)
+	NewBalanceSrc := BalanceSrc - t.Amount
+	NewBalanceDst := BalanceDst + t.Amount
+	if NewBalanceSrc < 0.0 {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Saldo Insuficiente"}`)
+		log.Printf(`{"result":"Negado","error":"Saldo Insuficiente"}`)
+	} else {
+		//TODO insert transfer here, use status field to set initial pending status
+		/*w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusAccepted)
+		fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)*/
+		log.Printf(`{"result":"Aprovado","error":""}`)
+	}
+
+	ctx := context.Background()
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	_, err = tx.ExecContext(ctx, "UPDATE accounts SET balance = $1 WHERE id = $2", NewBalanceSrc, IdSrc)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+	_, err = tx.ExecContext(ctx, "UPDATE accounts SET balance = $1 WHERE id = $2", NewBalanceDst, IdDst)
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+	_, err = tx.ExecContext(ctx, "INSERT INTO transfers "+
+		"(account_origin_id, account_destination_id, amount,  created_at) "+
+		"VALUES ($1, $2, $3, $4)", IdSrc, IdDst, t.Amount, time.Now())
+	if err != nil {
+		tx.Rollback()
+		return
+	}
+	tx.Commit()
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusAccepted)
+	fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)
 }
 func main() {
 	var err error

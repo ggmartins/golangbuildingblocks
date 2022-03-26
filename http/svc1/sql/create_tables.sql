@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 CREATE TABLE IF NOT EXISTS transfers (
-  id INT NOT NULL,
+  id SERIAL, --INT NOT NULL,
   account_origin_id INT NOT NULL,
   account_destination_id INT NOT NULL,
   amount numeric(19,4) NOT NULL,
