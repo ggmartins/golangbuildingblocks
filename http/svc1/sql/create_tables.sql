@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   secret varchar(250) NOT NULL,
   balance numeric(19,4) NOT NULL,
   created_at TIMESTAMP NOT NULL,
+  UNIQUE(cpf),
   PRIMARY KEY (id)
 );
 

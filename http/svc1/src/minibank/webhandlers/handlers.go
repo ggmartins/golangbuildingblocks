@@ -30,7 +30,35 @@ func (web *Web) GetAccountsIDBalance(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "GetAccountsIDBalance\n")
 }
 func (web *Web) PostAccounts(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "PostAccounts\n")
+	//fmt.Fprintf(w, "PostAccounts\n")
+	var a models.Account
+	err := json.NewDecoder(r.Body).Decode(&a)
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+		return
+	}
+	a, err = auth.HashAccount(&a)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+		return
+	}
+	err = web.dl.InsertAccount(a)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+		return
+	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+	} else {
+		w.WriteHeader(http.StatusAccepted)
+		fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)
+	}
 }
 
 func (web *Web) GetAccounts(w http.ResponseWriter, r *http.Request) {
@@ -42,7 +70,7 @@ func (web *Web) GetTransfers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (web *Web) PostTransfers(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "PostTransfers\n")
+	//fmt.Fprintf(w, "PostTransfers\n")
 	var t models.Transfer
 	err := json.NewDecoder(r.Body).Decode(&t)
 	if err != nil {

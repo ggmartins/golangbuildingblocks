@@ -104,6 +104,12 @@ func (dl *DataLayer_psql) PrintTransfers(output io.Writer) error {
 	return err
 }
 
+func (dl *DataLayer_psql) InsertAccount(a models.Account) error {
+	_, err := dl.db.Exec("INSERT INTO accounts (id, name, cpf, secret, balance, created_at) "+
+		"VALUES($1, $2, $3, $4, $5, $6)", a.Id, a.Name, a.Cpf, a.Secret, a.Balance, a.Created_at)
+	return err
+}
+
 func (dl *DataLayer_psql) DoTransfer(t *models.Transfer) (error, string) {
 	var err error
 	var IdSrc int
