@@ -110,6 +110,16 @@ func (dl *DataLayer_psql) InsertAccount(a models.Account) error {
 	return err
 }
 
+func (dl *DataLayer_psql) GetSecretHash(l models.Login) (string, error) {
+	var hashedSecret string
+	err := dl.db.QueryRow("SELECT secret from accounts where cpf = $1", l.Cpf).Scan(&hashedSecret)
+	if err != nil {
+		log.Printf(`{"result":"Negado","error":%q}`, err)
+		return "", err
+	}
+	return hashedSecret, nil
+}
+
 func (dl *DataLayer_psql) DoTransfer(t *models.Transfer) (error, string) {
 	var err error
 	var IdSrc int

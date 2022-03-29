@@ -23,7 +23,28 @@ func (web *Web) SetAuthorizer(auth *auth.Auth) {
 }
 
 func (web *Web) Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Login\n")
+	//fmt.Fprintf(w, "Login\n")
+	var l models.Login
+	err := json.NewDecoder(r.Body).Decode(&l)
+	w.Header().Set("Content-Type", "application/json")
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+		return
+	} else {
+		hashedSecret, err := web.dl.GetSecretHash(l)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+			return
+		}
+		if auth.CheckPasswordHash(l.Secret, hashedSecret) {
+			w.WriteHeader(http.StatusAccepted)
+			fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)
+		} else {
+			fmt.Fprintf(w, `{"result":"Negado","error":"Senha Invalida"}`)
+		}
+	}
 }
 
 func (web *Web) GetAccountsIDBalance(w http.ResponseWriter, r *http.Request) {
