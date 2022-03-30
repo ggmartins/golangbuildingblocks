@@ -26,6 +26,7 @@ services:
         links:
           - postgres
         environment:
+          - ACCESS_SECRET=a9i1kfo01098vh8k1c76a78
           - PGHOST=postgres
           - PGPORT=5432
           - PGUSER=minibank
