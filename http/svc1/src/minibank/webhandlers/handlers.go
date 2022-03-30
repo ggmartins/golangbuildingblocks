@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 type Web struct {
@@ -21,11 +23,10 @@ func (web *Web) SetDataLayer(dl *datalayer.DataLayer_psql) {
 }
 
 func (web *Web) SetAuthorizer(auth *auth.Auth) {
-	web.auth = auth
+	web.auth = auth //auth struct is currently empty
 }
 
 func (web *Web) Login(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "Login\n")
 	var l models.Login
 	err := json.NewDecoder(r.Body).Decode(&l)
 	w.Header().Set("Content-Type", "application/json")
@@ -57,10 +58,26 @@ func (web *Web) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (web *Web) GetAccountsIDBalance(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "GetAccountsIDBalance\n")
+	vars := mux.Vars(r)
+	token := ExtractToken(r)
+	isVerified, _ := auth.VerifyToken(token)
+	if !isVerified {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Desautorizado"}`)
+		return
+	}
+	id, err := strconv.ParseUint(vars["id"], 10, 64)
+	balance, err := web.dl.GetAccountsIDBalance(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	fmt.Fprintf(w, `{"result":"Aprovado","error":"","balance":%f}`, balance)
 }
+
 func (web *Web) PostAccounts(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "PostAccounts\n")
 	var a models.Account
 	err := json.NewDecoder(r.Body).Decode(&a)
 	w.Header().Set("Content-Type", "application/json")
@@ -122,7 +139,6 @@ func ExtractToken(r *http.Request) string {
 }
 
 func (web *Web) PostTransfers(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintf(w, "PostTransfers\n")
 	var t models.Transfer
 	token := ExtractToken(r)
 	isVerified, err := auth.VerifyToken(token)

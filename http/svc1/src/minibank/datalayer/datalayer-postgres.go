@@ -120,6 +120,16 @@ func (dl *DataLayer_psql) GetSecretHash(l models.Login) (string, error) {
 	return hashedSecret, nil
 }
 
+func (dl *DataLayer_psql) GetAccountsIDBalance(id uint64) (float64, error) {
+	var balance float64
+	err := dl.db.QueryRow("SELECT balance from accounts where id = $1", id).Scan(&balance)
+	if err != nil {
+		log.Printf(`{"result":"Negado","error":%q}`, err)
+		return 0.0, err
+	}
+	return balance, nil
+}
+
 func (dl *DataLayer_psql) DoTransfer(t *models.Transfer) (error, string) {
 	var err error
 	var IdSrc int

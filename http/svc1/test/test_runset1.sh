@@ -55,6 +55,15 @@ if cat result.getaccounts1.json | grep -q "Samantha"; then  echo PASS; else echo
 if cat result.getaccounts1.txt | grep -q "HTTP/1.1 200 OK"; then  echo PASS; else echo FAIL; fi
 
 ###
+echo "result.getidbalance OK"
+
+./test_getidbalance1.sh 2>result.getidbalance1.txt
+
+if cat result.getidbalance1.json | grep -q "Aprovado"; then  echo PASS; else echo FAIL; fi
+if cat result.getidbalance1.txt | grep -q "HTTP/1.1 200 OK"; then  echo PASS; else echo FAIL; fi
+
+
+###
 echo "result.gettranfers1 OK"
 
 ./test_gettransfers1.sh 2>result.gettransfers1.txt
