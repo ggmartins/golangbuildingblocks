@@ -12,3 +12,4 @@ Common reusable code gists/blocks using Golang
 - notifywebsocks, inotify + websockets 
 - pcap, minimal packet reader online/offline
 - reflect, object dump fieldName/Value
+- http/svc1, (minibank) mux, sql, jwt, bcrupt, docker-compose
