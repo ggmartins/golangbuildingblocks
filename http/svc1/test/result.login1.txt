@@ -1,0 +1,22 @@
+Note: Unnecessary use of -X or --request, POST is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying ::1:8000...
+* Connected to localhost (::1) port 8000 (#0)
+> POST /login HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.77.0
+> Accept: */*
+> Content-Type: application/json
+> Content-Length: 42
+> 
+} [42 bytes data]
+100    42    0     0  100    42      0     34  0:00:01  0:00:01 --:--:--    34100    42    0     0  100    42      0     18  0:00:02  0:00:02 --:--:--    18* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Type: application/json
+< Date: Wed, 30 Mar 2022 22:09:45 GMT
+< Content-Length: 202
+< 
+{ [202 bytes data]
+100   244  100   202  100    42     65     13  0:00:03  0:00:03 --:--:--    78100   244  100   202  100    42     65     13  0:00:03  0:00:03 --:--:--    78
+* Connection #0 to host localhost left intact

@@ -36,7 +36,7 @@ func (web *Web) Login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		hashedSecret, err := web.dl.GetSecretHash(l)
 		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusUnauthorized)
 			fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
 			return
 		}
@@ -86,16 +86,30 @@ func (web *Web) PostAccounts(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, `{"result":"Negado","error":%q}`, err)
 	} else {
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)
 	}
 }
 
 func (web *Web) GetAccounts(w http.ResponseWriter, r *http.Request) {
+	token := ExtractToken(r)
+	isVerified, _ := auth.VerifyToken(token)
+	if !isVerified {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Desautorizado"}`)
+		return
+	}
 	web.dl.PrintAccounts(w)
 }
 
 func (web *Web) GetTransfers(w http.ResponseWriter, r *http.Request) {
+	token := ExtractToken(r)
+	isVerified, _ := auth.VerifyToken(token)
+	if !isVerified {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, `{"result":"Negado","error":"Desautorizado"}`)
+		return
+	}
 	web.dl.PrintTransfers(w)
 }
 func ExtractToken(r *http.Request) string {
@@ -128,7 +142,7 @@ func (web *Web) PostTransfers(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, `{"result":"%s","error":"Conta de origem não identificada (%q)"}`, err, status)
 	} else {
-		w.WriteHeader(http.StatusAccepted)
+		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, `{"result":"Aprovado","error":""}`)
 	}
 

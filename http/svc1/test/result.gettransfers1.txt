@@ -1,0 +1,21 @@
+Note: Unnecessary use of -X or --request, GET is already inferred.
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying ::1:8000...
+* Connected to localhost (::1) port 8000 (#0)
+> GET /accounts HTTP/1.1
+> Host: localhost:8000
+> User-Agent: curl/7.77.0
+> Accept: */*
+> Content-Type: application/json
+> Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRob3JpemVkIjp0cnVlLCJleHAiOjE2NDg2NzkwODUsInVzZXJfaWQiOjI3NzYyMzkzMDA1fQ.VoZLHS3SkvCSu2d13kkAfX2_m1z5Slv3DgBYSUwX__A
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Date: Wed, 30 Mar 2022 22:09:45 GMT
+< Content-Length: 1250
+< Content-Type: text/plain; charset=utf-8
+< 
+{ [1250 bytes data]
+100  1250  100  1250    0     0  60009      0 --:--:-- --:--:-- --:--:--  110k
+* Connection #0 to host localhost left intact
