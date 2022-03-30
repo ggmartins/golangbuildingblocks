@@ -1,12 +1,12 @@
 # MiniBank challenge
 
-#### build <br>
+#### to build <br>
 `docker-compose build`
 
-#### run <br>
+#### to run <br>
 `docker-compose up`
 
-#### test <br>
+#### to test <br>
 
 cd test; ./test_runset1.sh
 
@@ -41,3 +41,9 @@ result.getaccounts1 (no token)
 PASS
 PASS
 ```
+
+#### TODO
+- ways to improve bcrypt with pepper: https://security.stackexchange.com/questions/21263/how-to-apply-a-pepper-correctly-to-bcrypt
+- ways to improve jwt with refresh, etc: https://developer.vonage.com/blog/2020/03/13/using-jwt-for-authentication-in-a-golang-application-dr
+- postgres, encryption at rest, maybe with https://wiki.postgresql.org/wiki/Transparent_Data_Encryption
+- future work: to run on minikube
